@@ -1,0 +1,23 @@
+.config-celdas{
+    padding: 0px 33px;
+}
+
+.hours{
+font-size: 11px;
+margin-left: 11px;
+}
+
+.config-caja-celda{
+margin-left: 1rem !important;
+}
+
+.img-portada{
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+.height-img{
+    height: 100%;
+}
+
+
