@@ -20,8 +20,6 @@
 	    <li><a class="new small indigo-text text-accent-4 " > tiempo: 10h14m10s</a></li>
     </ul>
 
-
-
 <div class="row">
 		<div class="col s4 m4 l2">
 			 <ul id="sidenav-left" class="sidenav sidenav-fixed indigo accent-4 " style="transform: translateX(0px);">
@@ -37,46 +35,29 @@
 			<div class="section"></div>
 			<div class="row">
 				<div class="col s12 m12 l12">
-					<!-- <div class="row">
-						<div class="col s6 m1 l1 config-caja-celda card-panel center">
-
-							<a class="btn-large  s12 config-celdas red lighten-1 dropdown-trigger" data-target='c1'>C1</a>
-							<span class="new light-blue-text hours"><strong class="indigo-text text-accent-4">10h14m10s</strong></span>
-						</div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel card-panel"><a class="btn-large config-celdas  ">C2</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large config-celdas  grey ">C3</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large config-celdas  grey ">C4</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large config-celdas grey ">C5</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large config-celdas  grey ">C6</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large config-celdas  grey ">C7</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large config-celdas  grey ">C8</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large config-celdas  grey ">C9</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large grey ">C10</a></div>
-					</div> -->
-
-					<!-- <div class="row">
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large  grey ">C11</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large grey ">C12</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large  grey ">C13</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large  grey ">C14</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large  grey ">C15</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large grey ">C16</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large  grey ">C17</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large  grey ">C18</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large  grey ">C19</a></div>
-						<div class="col s6 m1 l1 config-caja-celda card-panel"><a class="btn-large  grey ">C20</a></div>
-					</div> -->
                         <panel></panel>
+
 				</div>
 			</div>
 
 			<div class="divider"></div>
 
-		</div>
+            <div class="row">
+                <div class="col s12 m12 l12">
+                        <div class="section"></div>
+                        <div class="row">
+                            <div class="col s12 m12 l6 center"><a href="#entrada" class="col s12 m12 l12 btn btn-large indigo accent-4 modal-trigger">Entrada</a></div>
+                            <div class="col s12 m12 l6 center"><a  class="col s12 m12 l12 btn btn-large indigo accent-4 modal-trigger">Salida</a></div>
+                        </div>
+                </div>
+            </div>
+            <pre>@{{ $data }}</pre>
+        </div>
+        
 	</div>
 
 
 
 
-
+@include('entrada')
 @endsection

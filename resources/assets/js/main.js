@@ -1,30 +1,46 @@
-
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
-// require('./bootstrap');
-
-// window.Vue = require('vue');
-
 import Vue from 'vue';
-// import {panel} from './components/Panel.vue'
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+import Axios from 'axios';
 
- Vue.component('panel', require('./components/Panel.vue'));
+import toastr from 'toastr'
+import moment from 'moment';
+import panel from './components/Panel.vue';
 
-//import Main from './components/Main.vue';
+
 
  new Vue({
     el: '#app',
-    //render: h => h(Main),
     data: {
-        msg: 'habla mmg'
+        
+        placa: null,
+        marca: null,
+        estado: 'ocupado',
+        puesto: 'c1',
+        errors: null,
     },
+    components: {panel},
+    methods: {
+        nuevaEntrada (){
+            
+            var url = 'entradas'
+            console.log(this.entrada)
+            Axios.post( url, {
+                placa: this.placa,
+                marca: this.marca,
+                estado: this.estado,
+                puesto: this.puesto
+                
+            }).then(response => {
+                //getEntradas para actualizar el panel
+                this.formulario = {}
+                this.entrada = {}
+                this.errors = []
+                toastr.success('Entrada Exitosa')
+            }).catch(error => {
+                this.errors = 'Corrija para poder crear con éxito'
+            });
+            
+        },
+        
+    },
+
 });
