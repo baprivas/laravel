@@ -3,7 +3,7 @@
         <div class="row">
 			<div class="col s12 m12 l12">
                 <div class="row">
-                        <celda :color="ocupado" nameCelda="C1"></celda>
+                        <celda :color="colorDefault" nameCelda="C1"></celda>
                         <celda :color="colorDefault" nameCelda="C2"></celda>
                         <celda :color="colorDefault" nameCelda="C3"></celda>
                         <celda :color="colorDefault" nameCelda="C4"></celda>
@@ -24,7 +24,7 @@
                         <celda :color="colorDefault" nameCelda="C16"></celda>
                         <celda :color="colorDefault" nameCelda="C17"></celda>
                         <celda :color="colorDefault" nameCelda="C18"></celda>
-                        <celda :color="ocupado" nameCelda="C19"></celda>
+                        <celda :color="colorDefault" nameCelda="C19"></celda>
                         <celda :color="colorDefault" nameCelda="C20"></celda> 
                 </div>
        	    </div>
@@ -37,14 +37,14 @@
 <script>
 import celda from './Celda.vue'
 export default {
-    
+    components: {celda},
     data(){
         return{
             colorDefault: 'grey',
             ocupado: 'red lighten-1',
         }
     },
-    components: {celda},
+  
 }
 
 </script>
