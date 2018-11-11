@@ -14,11 +14,7 @@
     </ul>
 
 
-    <ul id='c1' class='dropdown-content'>
-    	<li><a href="#!" class="indigo-text text-accent-4">Placa - GJYRDSDS</a></li>
-    	<li class="divider" tabindex="-1"></li>
-	    <li><a class="new small indigo-text text-accent-4 " > tiempo: 10h14m10s</a></li>
-    </ul>
+    
 
 <div class="row">
 		<div class="col s4 m4 l2">
@@ -51,7 +47,7 @@
                         </div>
                 </div>
             </div>
-            <pre>@{{ $data }}</pre>
+            
         </div>
         
 	</div>
@@ -59,5 +55,5 @@
 
 
 
-@include('entrada')
+
 @endsection
