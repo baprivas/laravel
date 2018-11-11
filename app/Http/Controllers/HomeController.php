@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Superiores;
+use App\Inferiores;
+use Illuminate\Http\Response;
 
 class HomeController extends Controller
 {
@@ -22,6 +25,16 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
+    {
+        $superiores = Superiores::all();
+        $inferiores = Inferiores::all();
+        $juntos = [$superiores, $inferiores];
+        //return ['celdasarriba' => $superiores, 'celdasabajo' => $inferiores];
+        //return response([Superiores::all()->jsonSerialize(), response::HTTP_CREATED]);
+        return response()->json($juntos);
+    }
+
+    public function inicio()
     {
         return view('home');
     }

@@ -1,10 +1,21 @@
 import Vue from 'vue'
+import axios from 'axios'
 import moment from 'moment'
 
 moment.locale('es')
 
 
+var dropdown = function() {
+    var elems = document.querySelectorAll('.dropdown-trigger');
+    var instances = M.Dropdown.init(elems, {hover: true, constrainWidth: false});
+  }
+
+
 Vue.component('panel', {
+    created: function (){ 
+        this.getCeldas()
+        
+    },
     template:`  <section>
                     <div class="row">
                         <div class="col s12 m12 l12">
@@ -21,34 +32,19 @@ Vue.component('panel', {
                 </section>`,
     data(){
         return {
-            celdasarriba: [
-                { celda: 'c1', estado: 'ocupado', placa : null, marca: null, time: null },
-                { celda: 'c2', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c3', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c4', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c5', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c6', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c7', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c8', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c9', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c10', estado: 'disponible', placa : null, marca: null, time: null },
-            ],
-            celdasabajo: [
-                { celda: 'c11', estado: 'ocupado', placa : null, marca: null, time: null },
-                { celda: 'c12', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c13', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c14', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c15', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c16', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c17', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c18', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c19', estado: 'disponible', placa : null, marca: null, time: null },
-                { celda: 'c20', estado: 'disponible', placa : null, marca: null, time: null },
-            ],
+            celdasarriba: [],
+            celdasabajo: [],
         }
     },
     methods: {
-
+        getCeldas: function () {
+            var urlceldas = 'home'
+            axios.get(urlceldas).then( response => {
+                console.log(response.data)
+                this.celdasarriba = response.data[0]
+                this.celdasabajo = response.data[1]
+            })
+        }
     },
     
     
@@ -76,7 +72,7 @@ Vue.component('celda-superior', {
                            <li><a  class="indigo-text text-accent-4">Marca -  {{ celdasuperior.marca }}</a></li>
                            <li class="divider" tabindex="-1"></li>
                            <li><a class="new small indigo-text text-accent-4 " > {{ celdasuperior.estado }}</a></li>
-                           <li><a class="new small indigo-text text-accent-4 " > <em>{{ since(celdasuperior.time) }}</em></a></li>
+                           <li><a class="new small indigo-text text-accent-4 " > <em>{{ since(celdasuperior.created_at) }}</em></a></li>
                        </ul>
                        
                 </div>`,
@@ -90,6 +86,7 @@ Vue.component('celda-superior', {
             
         },
         created () { 
+            dropdown()
             if(this.celdasuperior.estado === 'disponible')
             {   
                 console.log(this.celdasuperior.estado)
@@ -99,8 +96,15 @@ Vue.component('celda-superior', {
                 this.config += this.ocupado 
                 this.config += ' '
                 this.config += this.subpanel
+                
             }
-        }  ,
+
+
+            
+        },
+        updated: function() {
+            //dropdown()
+        },
 
         
 
@@ -127,7 +131,7 @@ Vue.component('celda-inferior', {
                            <li><a  class="indigo-text text-accent-4">Marca -  {{ celdainferior.marca }}</a></li>
                            <li class="divider" tabindex="-1"></li>
                            <li><a class="new small indigo-text text-accent-4 " > {{ celdainferior.estado }}</a></li>
-                           <li><a class="new small indigo-text text-accent-4 " > <em>{{ since(celdainferior.time) }}</em></a></li>
+                           <li><a class="new small indigo-text text-accent-4 " > <em>{{ since(celdainferior.created_at) }}</em></a></li>
                        </ul>
                 </div>`,
     methods: {
@@ -136,6 +140,7 @@ Vue.component('celda-inferior', {
         },
     },
     created () { 
+        dropdown()
         if(this.celdainferior.estado === 'disponible')
         {   
             console.log(this.celdainferior.estado)
@@ -145,7 +150,11 @@ Vue.component('celda-inferior', {
             this.config += this.ocupado 
             this.config += ' '
             this.config += this.subpanel
+           
         }
+    },
+    updated: function() {
+       // dropdown()
     }
 })
 
