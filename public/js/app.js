@@ -29780,62 +29780,76 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('panel', {
         nuevaCelda: function nuevaCelda(marca, placa) {
             var _this3 = this;
 
-            this.celdaAsinada.marca = marca;
-            this.celdaAsinada.placa = placa;
-            console.log(this.celdaAsinada);
-            var celda = this.celdaAsinada;
-            celda.estado = 'ocupado';
-            var url = 'entradas/' + celda.id;
-            __WEBPACK_IMPORTED_MODULE_1_axios___default.a.put(url, celda).then(function (response) {
-                //console.log(response)
-                _this3.getCeldas();
-                dropdown();
-                //this.celdaAsinada = null
-                _this3.errors = [];
-                __WEBPACK_IMPORTED_MODULE_3_toastr___default.a.success('Puesto asignado con exito');
-            }).catch(function (error) {
-                _this3.errors = 'hubo un mal entendido';
-            });
+            if (this.celdaAsinada === 0) {
+                __WEBPACK_IMPORTED_MODULE_3_toastr___default.a.error('No hay puesto disponibles por el momento');
+            } else {
+                this.celdaAsinada.marca = marca;
+                this.celdaAsinada.placa = placa;
+                console.log(this.celdaAsinada);
+                var celda = this.celdaAsinada;
+                celda.estado = 'ocupado';
+                var url = 'entradas/' + celda.id;
+                __WEBPACK_IMPORTED_MODULE_1_axios___default.a.put(url, celda).then(function (response) {
+                    //console.log(response)
+                    _this3.getCeldas();
+                    dropdown();
+                    //this.celdaAsinada = null
+                    _this3.errors = [];
+                    __WEBPACK_IMPORTED_MODULE_3_toastr___default.a.success('Puesto: ' + celda.celda + 'placa: ' + celda.placa);
+                }).catch(function (error) {
+                    _this3.errors = 'hubo un mal entendido';
+                });
+            }
         }
 
     },
     computed: {
-        superioresDisponibles: function superioresDisponibles() {
-
-            this.superioresDisp = this.celdasarriba.filter(function (celda) {
-                return celda.estado === 'disponible';
-            });
-
-            return this.superioresDisp;
-        },
         inferioresDisponibles: function inferioresDisponibles() {
 
-            this.inferioresDisp = this.celdasabajo.filter(function (celda) {
+            return this.inferioresDisp = this.celdasabajo.filter(function (celda) {
                 return celda.estado === 'disponible';
             });
-
-            return this.inferioresDisp;
+            //return this.inferioresDisp
         },
         celdaAsinada: function celdaAsinada() {
             var celdasDips = [];
+            var celdasarri = [];
+            var finalarray = [];
 
-            this.superioresDisponibles.forEach(function (element) {
+            this.celdasarriba.forEach(function (element) {
+                celdasarri.push(element);
+            });
+
+            this.inferioresDisponibles.forEach(function (element) {
                 celdasDips.push(element);
             });
 
-            this.inferioresDisponibles.forEach(function (element2) {
-                celdasDips.push(element2);
+            this.inferioresDisponibles.forEach(function (e1) {
+                return celdasarri.forEach(function (e2) {
+                    if (e1.id === e2.id) {
+                        finalarray.push(e2);
+                    }
+                });
             });
 
             var numeroCeldas = celdasDips.length;
-            console.log(numeroCeldas);
-            console.log(celdasDips);
             var iteracion = Math.floor(Math.random() * numeroCeldas);
+            // console.log(' iteracion '+iteracion)
             var celda = celdasDips[iteracion];
-            //console.log(celda)
-            //  celda.estado = 'ocupado'
-            //celda.panel = 'superior'
-            return celda;
+            var celda2 = finalarray[iteracion];
+
+            // console.log(celda.celda)
+            // console.log(celda2.celda)
+            if (!celda2 && !celda) {
+                var alerta = 0;
+                return alerta;
+            } else if (celda2.estado === 'ocupado' && celda.estado === 'disponible') {
+
+                return celda;
+            } else {
+
+                return celda2;
+            }
         }
     }
 

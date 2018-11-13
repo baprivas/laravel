@@ -74,9 +74,12 @@ Vue.component('panel', {
         },
         nuevaCelda: function (marca, placa){
             
-            this.celdaAsinada.marca = marca
+            if (this.celdaAsinada === 0){
+                toastr.error('No hay puesto disponibles por el momento')
+            }else{
+                this.celdaAsinada.marca = marca
             this.celdaAsinada.placa = placa
-            console.log(this.celdaAsinada)
+             console.log(this.celdaAsinada) 
             let celda = this.celdaAsinada
             celda.estado = 'ocupado'
             var url = 'entradas/'+ celda.id
@@ -86,10 +89,11 @@ Vue.component('panel', {
                 dropdown()
                 //this.celdaAsinada = null
                 this.errors = []
-                toastr.success('Puesto asignado con exito')
+                toastr.success('Puesto: ' + celda.celda + 'placa: ' + celda.placa )
             }).catch(error =>{
                 this.errors = 'hubo un mal entendido'
             })
+            }
             
         }
         
@@ -97,41 +101,44 @@ Vue.component('panel', {
 
     },
     computed: {
-        superioresDisponibles(){
-            
-            this.superioresDisp = this.celdasarriba.filter( celda => celda.estado === 'disponible')
-            
-            return this.superioresDisp
-        },
         inferioresDisponibles(){
             
-            this.inferioresDisp = this.celdasabajo.filter( celda => celda.estado === 'disponible')
-            
-            return this.inferioresDisp
+            return this.inferioresDisp = this.celdasabajo.filter(celda => celda.estado === 'disponible')
+            //return this.inferioresDisp
         },
         celdaAsinada(){
             var celdasDips = []
-           
-            this.superioresDisponibles.forEach(element => {
-                celdasDips.push(element)
-               
-            });
+           var celdasarri = []
+           var finalarray =[]
 
-            this.inferioresDisponibles.forEach(element2 => {
-                celdasDips.push(element2)
-                
-            })
+
+            this.celdasarriba.forEach(element => {celdasarri.push(element)})
+
+            this.inferioresDisponibles.forEach(element => {celdasDips.push(element)})
+
+            this.inferioresDisponibles.forEach((e1) => celdasarri.forEach((e2) => {if( e1.id === e2.id){ finalarray.push(e2) }}))
 
             let numeroCeldas = celdasDips.length
-            console.log(numeroCeldas)
-            console.log(celdasDips)
             let iteracion = Math.floor(Math.random() * numeroCeldas)
+            // console.log(' iteracion '+iteracion)
             let celda = celdasDips[iteracion]
-             //console.log(celda)
-            //  celda.estado = 'ocupado'
-             //celda.panel = 'superior'
-             return celda
+            let celda2 = finalarray[iteracion]
             
+            // console.log(celda.celda)
+            // console.log(celda2.celda)
+            if (!celda2 && !celda){
+                var alerta = 0
+                return alerta
+            }else if (celda2.estado === 'ocupado' && celda.estado === 'disponible'){
+
+                 return celda
+                 
+            }else{
+                
+            return celda2
+             }
+
+    
         }
     },
    
