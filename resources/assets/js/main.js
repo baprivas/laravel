@@ -1,11 +1,10 @@
 import Vue from 'vue'
 import axios from 'axios'
-import moment from 'moment'
 import toastr from 'toastr'
 
 const enlace = new Vue()
 
-moment.locale('es')
+
 
 
 var dropdown = function() {
@@ -13,22 +12,31 @@ var dropdown = function() {
     var instances = M.Dropdown.init(elems, {hover: true, constrainWidth: false});
   }
 
-
-
-
 Vue.component('panel', {
-    created: function (){ 
-        dropdown()
-        this.getCeldas()
-        
-        enlace.$on('formulario-entrada:submit', (placa, marca) => {
+    created: function (){
+        // this.contador() 
 
+        dropdown()
+
+        this.getCeldas()
+
+        enlace.$on('formulario-entrada:submit', (placa, marca) => {
             this.placa = placa
             this.marca = marca
-            
             //console.log('Recibiendo mensaje del formulario-entrada')
             this.nuevaCelda(this.placa, this.marca)
         })
+
+
+        enlace.$on('confirmado:click', (saliendo) => {
+            console.log('confirmando y ejecutando la accion')
+           
+            this.confirmado = saliendo
+
+            this.ejecutarSalida(this.confirmado)
+
+        })
+
     },
     template:`  
         <section>
@@ -48,11 +56,12 @@ Vue.component('panel', {
                     <div class="section"></div>
                     <div class="row">
                         <div class="col s12 m12 l6 center"><a href="#entrada"  class="col s12 m12 l12 btn btn-large indigo accent-4 modal-trigger">Entrada</a></div>
-                        <div class="col s12 m12 l6 center"><a  class="col s12 m12 l12 btn btn-large indigo accent-4 modal-trigger">Salida</a></div>
+                        
                     </div>
                 </div>
             </div>
                             <formulario-entrada></formulario-entrada>
+                            <salida></salida>
         </section>
     `,
     data(){
@@ -61,6 +70,8 @@ Vue.component('panel', {
             celdasabajo: [],
             placa: null,
             marca: null,
+            duracion: 0,
+            
         }
     },
     methods: {
@@ -78,39 +89,143 @@ Vue.component('panel', {
                 toastr.error('No hay puesto disponibles por el momento')
             }else{
                 this.celdaAsinada.marca = marca
-            this.celdaAsinada.placa = placa
-             console.log(this.celdaAsinada) 
-            let celda = this.celdaAsinada
-            celda.estado = 'ocupado'
-            var url = 'entradas/'+ celda.id
-            axios.put(url, celda).then(response => {
+                this.celdaAsinada.placa = placa
+                console.log(this.celdaAsinada) 
+                let celda = this.celdaAsinada
+                celda.estado = 'ocupado'
+                var url = 'entradas/'+ celda.id
+                axios.put(url, celda).then(response => {
                 //console.log(response)
                 this.getCeldas()
                 dropdown()
-                //this.celdaAsinada = null
                 this.errors = []
                 toastr.success('Puesto: ' + celda.celda + 'placa: ' + celda.placa )
-            }).catch(error =>{
+                }).catch(error =>{
+                this.errors = 'hubo un mal entendido'
+                })
+            }
+            
+        },
+        ejecutarSalida: function (){
+            
+            
+                let id = this.confirmado.id
+                console.log('la propiedad cofirmado')
+                console.log(this.confirmado)
+                console.log(id)
+                    console.log('antes viene id confirmado')
+                  let celdaopcupada = this.celdasabajo.filter(celda => celda.id === id)
+                  console.log('hola')
+                  console.log(celdaopcupada[0])
+                  
+
+
+            if(this.confirmado.panel === 'superior' && celdaopcupada[0].estado === 'ocupado'){
+                
+                this.ejecutarMultpliePetecionAxios()
+                 
+            }else{
+                this.confirmado.marca = null
+                this.confirmado.placa = null
+                this.confirmado.estado = 'disponible'
+                this.confirmado.celdafinal = null,
+                this.confirmado.duracion = null
+                this.confirmado.updated_at = null
+
+                var url = 'entradas/'+ this.confirmado.id
+                axios.put(url, this.confirmado).then(response => {
+                //console.log(response)
+                this.getCeldas()
+                dropdown()
+                this.errors = []
+                toastr.success('Vehículo retirado con Exito EPA')
+                }).catch(error =>{
                 this.errors = 'hubo un mal entendido'
             })
             }
-            
+           
+        },
+        reasignar: function (){
+                
+                let id = this.confirmado.id
+                let celdaopcupada = this.celdasabajo.filter(celda => celda.id === id)
+                let  celda = this.celdaAsinada
+                celda.marca = celdaopcupada[0].marca
+                celda.placa = celdaopcupada[0].placa
+                celda.celdainicial = celdaopcupada[0].celda
+                celda.duracion = celdaopcupada[0].duracion
+                celda.estado = 'ocupado'
+
+                var url = 'entradas/'+ celda.id
+
+               return axios.put(url, celda)
+
+
+        },
+        restablecerCelda: function (){
+            let id = this.confirmado.id
+                let celdaopcupada = this.celdasabajo.filter(celda => celda.id === id)
+            celdaopcupada[0].marca = null
+            celdaopcupada[0].placa = null
+           celdaopcupada[0].estado = 'disponible'
+           celdaopcupada[0].celdafinal = null,
+           celdaopcupada[0].duracion = null
+           celdaopcupada[0].updated_at = null
+
+           var url = 'entradas/'+ celdaopcupada[0].id
+            return axios.put(url, celdaopcupada[0])
+        },
+        liberarCelda: function(){
+            this.confirmado.marca = null
+            this.confirmado.placa = null
+            this.confirmado.estado = 'disponible'
+            this.confirmado.celdafinal = null,
+            this.confirmado.duracion = null
+            this.confirmado.updated_at = null
+           
+            var url = 'entradas/'+ this.confirmado.id
+            return axios.put(url, this.confirmado)
+        },
+        refreshPanel: function (){
+            return this.getCeldas()
+        },
+        ejecutarMultpliePetecionAxios: function (){
+                axios.all([this.reasignar(),this.restablecerCelda(), this.liberarCelda()]).then(axios.spread(function (reasig, rest, libel, refrh){
+                    dropdown()
+                    toastr.success('La operación concluyó de manera exitosa!')
+                    toastr.success('restableciendo celda inferior y superior')
+                     toastr.success('reasignando celda inferior')
+                })).catch( (error) => {
+                    toastr.error('exploto')
+                    console.log(error)
+                })
         }
+        // iniciar(){
+        //     setInterval(() =>{
+        //         switch (this.activated) {
+        //             case true:
+        //                 this.contador = this.contador +1;
+        //             break;
+        //             case false:
+        //                 this.contador = 0;
+        //                 localStorage.setItem(this.id, this.fincontador);
+        //             break;
+        //         }
+        //     },1000);
+
+        // }    
         
 
 
     },
     computed: {
         inferioresDisponibles(){
-            
             return this.inferioresDisp = this.celdasabajo.filter(celda => celda.estado === 'disponible')
-            //return this.inferioresDisp
         },
         celdaAsinada(){
             var celdasDips = []
-           var celdasarri = []
-           var finalarray =[]
-
+            var celdasarri = []
+            var finalarray =[]
 
             this.celdasarriba.forEach(element => {celdasarri.push(element)})
 
@@ -130,15 +245,15 @@ Vue.component('panel', {
                 var alerta = 0
                 return alerta
             }else if (celda2.estado === 'ocupado' && celda.estado === 'disponible'){
-
-                 return celda
-                 
+                 return celda  
             }else{
-                
-            return celda2
+                return celda2
              }
 
+
     
+        
+        
         }
     },
    
@@ -146,8 +261,7 @@ Vue.component('panel', {
 
 
 Vue.component('celda-superior', {
-    
-    props: ['celdasuperior'],
+    props: ['celdasuperior', 'duracion'],
     data(){
         return {
             disponible: 'green',
@@ -157,22 +271,23 @@ Vue.component('celda-superior', {
         }
     },
     template: `<div>
-                    <div class="col s6 m1 l1 config-caja-celda card-panel">
+                    <div class="col s6 m1 l1 config-caja-celda ">
                        <a class="btn-large config-celdas dropdown-trigger red"  :data-target='celdasuperior.celda' v-if="celdasuperior.estado === 'ocupado'">{{ celdasuperior.celda }}</a>
                        <a class="btn-large config-celdas green"  :data-target='celdasuperior.celda' v-else>{{ celdasuperior.celda }}</a>
                     </div>
-                       <ul :id='celdasuperior.celda' class='dropdown-content' v-if="celdasuperior.estado === 'ocupado'">
+                       <ul :id='celdasuperior.celda' class='dropdown-content' >
                            <li><a  class="indigo-text text-accent-4">Placa -  {{ celdasuperior.placa }}</a></li>
                            <li><a  class="indigo-text text-accent-4">Marca -  {{ celdasuperior.marca }}</a></li>
                            <li class="divider" tabindex="-1"></li>
-                           <li><a class="new small indigo-text text-accent-4 " > {{ celdasuperior.estado }}</a></li>
-                           <li><a class="new small indigo-text text-accent-4 " > <em>{{ since(celdasuperior.created_at) }}</em></a></li>
+                           <li><a class="new small indigo-text text-accent-4 " > {{ duracion }}</a></li>
+                           <li><a href="#salida" class="new small indigo-text text-accent-4 modal-trigger" v-if="celdasuperior.estado === 'ocupado'" @click="preFactura">Retirar Vehículo</a></li>
                        </ul>
                     
                 </div>`,
     methods: {
-            since: (d) =>{
-                return moment(d).startOf('hour').fromNow()
+            preFactura: function () {
+                this.celda = this.celdasuperior
+                enlace.$emit('preFactura:click', this.celda)
             },
             cambioEstado: function (){
                 dropdown()
@@ -190,9 +305,6 @@ Vue.component('celda-superior', {
             }
            
         },
-        computed: {
-            
-        },
         created () { 
             dropdown()
             this.cambioEstado()
@@ -206,31 +318,34 @@ Vue.component('celda-superior', {
 })
 
 Vue.component('celda-inferior', {
-    props: ['celdainferior'],
+    props: ['celdainferior', 'duracion'],
     data(){
         return {
             disponible: 'green',
             ocupado: 'red',
             subpanel: 'dropdown-trigger',
-            config: []
+            config: [],
+            celda: []
         }
     },
     template: `<div>
-                    <div class="col s6 m1 l1 config-caja-celda card-panel">
+                    <div class="col s6 m1 l1 config-caja-celda ">
                         <a class="btn-large dropdown-trigger red"  :data-target='celdainferior.celda'  v-if="celdainferior.estado === 'ocupado'">{{ celdainferior.celda }}</a>
-                        <a class="btn-large green" :data-target='celdainferior.celda' v-else>{{ celdainferior.celda }}</a>
+                        <a class="btn-large green"  v-else>{{ celdainferior.celda }}</a>
                     </div> 
-                    <ul :id='celdainferior.celda' class='dropdown-content' v-if="celdainferior.estado === 'ocupado'">
+                    <ul :id='celdainferior.celda' class='dropdown-content' >
                            <li><a  class="indigo-text text-accent-4">Placa -  {{ celdainferior.placa }}</a></li>
                            <li><a  class="indigo-text text-accent-4">Marca -  {{ celdainferior.marca }}</a></li>
                            <li class="divider" tabindex="-1"></li>
-                           <li><a class="new small indigo-text text-accent-4 " > {{ celdainferior.estado }}</a></li>
-                           <li><a class="new small indigo-text text-accent-4 " > <em>{{ since(celdainferior.created_at) }}</em></a></li>
+                           <li><a class="new small indigo-text text-accent-4 " > {{ duracion }}</a></li>
+                           <li><a href="#salida" class="new small indigo-text text-accent-4 modal-trigger" v-if="celdainferior.estado === 'ocupado'" @click="preFactura">Retirar Vehículo</a></li>
                        </ul>
                 </div>`,
     methods: {
-        since: (d) =>{
-            return moment(d).fromNow()
+        preFactura: function () {
+            this.celda = this.celdainferior
+            enlace.$emit('preFactura:click', this.celda)
+        
         },
         cambioEstado: function (){
             dropdown()
@@ -259,8 +374,6 @@ Vue.component('celda-inferior', {
     },
     
 })
-
-
 
 Vue.component('formulario-entrada', {
     data(){
@@ -306,6 +419,69 @@ Vue.component('formulario-entrada', {
             this.placa = ''
         }
     }
+})
+
+
+Vue.component('salida', {
+    created: function (){
+        enlace.$on('preFactura:click', (celda) => {
+            console.log('pre-confirmacion')
+            console.log(celda)
+            this.saliendo = celda
+            this.saliendo.celdafinal = celda.celda
+
+        })
+    },
+    data(){
+        return {
+            monto: 0,
+            duracion: 120,
+            tarifa: 30,
+            saliendo: []
+        }
+    },
+    template: `
+                <div id="salida" class="modal modal-fixed-footer">
+                        <div class="modal-content">
+                            <h4>Factura</h4>
+                           
+
+                            <div class="collection">
+                                <a class="collection-item"><span class="badge">{{ this.saliendo.celda }}</span>celda</a>
+                                <a class="collection-item"><span class="badge">{{ this.saliendo.placa }}</span>Vehículo</a>
+                                <a class="collection-item"><span class="badge">{{  this.saliendo.marca }}</span>marca</a>
+                                <a class="collection-item"><span class="badge">{{  this.saliendo.celdainicial  }}</span>Celda Inicial</a>
+                                <a class="collection-item"><span class="badge">{{   this.saliendo.celda }}</span>Celda Final</a>
+                                <a class="collection-item"><span class="badge">{{  this.total }}</span>monto</a>
+                                <a class="collection-item"><span class="badge">{{ this.duracion }}</span>duración</a>
+                                
+                            </div>
+                        </div>
+                   
+                    <div class="modal-footer">
+                        <button  class="modal-close waves-effect waves-green btn-flat" @click="salidaVehiculo">Confirmar</button>
+                        <button  class="modal-close waves-effect waves-green btn-flat">Cancelar</button>
+                    </div>  
+                </div> `,
+    methods: {
+        salidaVehiculo: function () {
+            enlace.$emit('confirmado:click', this.saliendo)
+            this.saliendo.celda
+            this.saliendo.placa
+            this.saliendo.marca
+            this.saliendo.celdafinal
+
+        },
+
+        
+    },
+    computed: {
+        total: function (){
+            this.monto = this.saliendo.duracion * this.tarifa
+            return this.monto
+        }
+    }
+    
 })
 
 

@@ -21,6 +21,7 @@ class CreateParteInferiorTable extends Migration
             $table->string('marca')->nullable();
             $table->string('duracion')->nullable();
             $table->string('celdafinal')->nullable();
+            $table->string('celdainicial')->nullable();
             $table->string('panel')->default('inferior');
             $table->timestamps();
         });

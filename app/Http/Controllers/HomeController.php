@@ -26,11 +26,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-
-    }
-
-    public function inicio()
-    {
         return view('home');
     }
+
+    
 }

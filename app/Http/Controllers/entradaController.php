@@ -17,8 +17,6 @@ class entradaController extends Controller
         $superiores = Superiores::all();
         $inferiores = Inferiores::all();
         $juntos = [$superiores, $inferiores];
-        //return ['celdasarriba' => $superiores, 'celdasabajo' => $inferiores];
-        //return response([Superiores::all()->jsonSerialize(), response::HTTP_CREATED]);
         return response()->json($juntos);
     }
 
@@ -36,10 +34,12 @@ class entradaController extends Controller
     {
         if ($request->panel === 'superior'){
             Superiores::find($id)->update($request->all());
+            dd($request->celda);
         }
 
         if ($request->panel === 'inferior'){
             Inferiores::find($id)->update($request->all());
+            dd($request->celda);
         }
             
         
