@@ -30,27 +30,11 @@
 			</div>
 			<div class="section"></div>
 			<div class="row">
-				<div class="col s12 m12 l12">
-                        <panel></panel>
-
-				</div>
+					<panel></panel>
 			</div>
-
-			<div class="divider"></div>
-
-            <div class="row">
-                <div class="col s12 m12 l12">
-                        <div class="section"></div>
-                        <div class="row">
-                            <div class="col s12 m12 l6 center"><a href="#entrada" class="col s12 m12 l12 btn btn-large indigo accent-4 modal-trigger">Entrada</a></div>
-                            <div class="col s12 m12 l6 center"><a  class="col s12 m12 l12 btn btn-large indigo accent-4 modal-trigger">Salida</a></div>
-                        </div>
-                </div>
-            </div>
-            
-        </div>
+		</div>
         
-	</div>
+</div>
 
 
 

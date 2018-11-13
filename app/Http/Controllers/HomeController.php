@@ -26,12 +26,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $superiores = Superiores::all();
-        $inferiores = Inferiores::all();
-        $juntos = [$superiores, $inferiores];
-        //return ['celdasarriba' => $superiores, 'celdasabajo' => $inferiores];
-        //return response([Superiores::all()->jsonSerialize(), response::HTTP_CREATED]);
-        return response()->json($juntos);
+
     }
 
     public function inicio()

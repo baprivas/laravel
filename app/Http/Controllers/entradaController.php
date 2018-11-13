@@ -14,11 +14,12 @@ class entradaController extends Controller
 
     public function index()
     {
-        $superiores = Superiores::orderBy('id', 'asc');
-        $inferiores = Inferiores::orderBy('id', 'asc');
-
+        $superiores = Superiores::all();
+        $inferiores = Inferiores::all();
+        $juntos = [$superiores, $inferiores];
         //return ['celdasarriba' => $superiores, 'celdasabajo' => $inferiores];
-        return response(Superiores::all()->jsonSerialize(), response::HTTP_CREATED);
+        //return response([Superiores::all()->jsonSerialize(), response::HTTP_CREATED]);
+        return response()->json($juntos);
     }
 
 
@@ -31,9 +32,17 @@ class entradaController extends Controller
 
  
 
-    public function update(Request $request, Entrada $entrada)
+    public function update(Request $request, $id)
     {
-        //
+        if ($request->panel === 'superior'){
+            Superiores::find($id)->update($request->all());
+        }
+
+        if ($request->panel === 'inferior'){
+            Inferiores::find($id)->update($request->all());
+        }
+            
+        
     }
 
     public function destroy(Entrada $entrada)

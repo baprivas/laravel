@@ -43,9 +43,9 @@ class ParteSuperiorTableSeeder extends Seeder
 
         Superiores::create([
             'celda' => 'c5',
-            'estado' => 'ocupado',
-            'placa' => 'HKH',
-            'marca' => 'Jeep',
+            'estado' => 'disponible',
+            'created_at' => null,
+            'updated_at' => null,
 
         ]);
 
