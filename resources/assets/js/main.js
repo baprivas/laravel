@@ -108,7 +108,10 @@ Vue.component('panel', {
         },
         ejecutarSalida: function (){
             
-            
+
+            if (this.celdaAsinada === 0){
+                this.ejecutarDoblePeticionAxios()
+            }else{
                 let id = this.confirmado.id
                 console.log('la propiedad cofirmado')
                 console.log(this.confirmado)
@@ -117,32 +120,37 @@ Vue.component('panel', {
                   let celdaopcupada = this.celdasabajo.filter(celda => celda.id === id)
                   console.log('hola')
                   console.log(celdaopcupada[0])
+
+                  if(this.confirmado.panel === 'superior' && celdaopcupada[0].estado === 'ocupado'){
+                
+                    this.ejecutarTlipePeticionAxios()
+                     
+                }else{
+                    this.confirmado.marca = null
+                    this.confirmado.placa = null
+                    this.confirmado.estado = 'disponible'
+                    this.confirmado.celdafinal = null,
+                    this.confirmado.duracion = null
+                    this.confirmado.updated_at = null
+    
+                    var url = 'entradas/'+ this.confirmado.id
+                    axios.put(url, this.confirmado).then(response => {
+                    //console.log(response)
+                    this.getCeldas()
+                    dropdown()
+                    this.errors = []
+                    toastr.success('Vehículo retirado con Exito EPA')
+                    }).catch(error =>{
+                    this.errors = 'hubo un mal entendido'
+                })
+                }
+            }
+
+               
                   
 
 
-            if(this.confirmado.panel === 'superior' && celdaopcupada[0].estado === 'ocupado'){
-                
-                this.ejecutarMultpliePetecionAxios()
-                 
-            }else{
-                this.confirmado.marca = null
-                this.confirmado.placa = null
-                this.confirmado.estado = 'disponible'
-                this.confirmado.celdafinal = null,
-                this.confirmado.duracion = null
-                this.confirmado.updated_at = null
-
-                var url = 'entradas/'+ this.confirmado.id
-                axios.put(url, this.confirmado).then(response => {
-                //console.log(response)
-                this.getCeldas()
-                dropdown()
-                this.errors = []
-                toastr.success('Vehículo retirado con Exito EPA')
-                }).catch(error =>{
-                this.errors = 'hubo un mal entendido'
-            })
-            }
+           
            
         },
         reasignar: function (){
@@ -186,15 +194,41 @@ Vue.component('panel', {
             var url = 'entradas/'+ this.confirmado.id
             return axios.put(url, this.confirmado)
         },
+        cambioCeldaForzado:function (){
+
+            let id = this.confirmado.id
+            let celdaopcupada = this.celdasabajo.filter(celda => celda.id === id)
+              celdaopcupada[0].marca = this.confirmado.placa
+              celdaopcupada[0].placa = this.confirmado.marca
+              celdaopcupada[0].estado = 'ocupado'
+              celdaopcupada[0].celdafinal = this.confirmado.celda
+              celdaopcupada[0].celdainicial = celdaopcupada[0].celdainicial
+              celdaopcupada[0].duracion = this.confirmado.duracion
+              celdaopcupada[0].updated_at = null
+            
+            
+            var url = 'entradas/'+ celdaopcupada[0].id
+            return axios.put(url, celdaopcupada[0])
+        }, 
         refreshPanel: function (){
             return this.getCeldas()
         },
-        ejecutarMultpliePetecionAxios: function (){
+        ejecutarTlipePeticionAxios: function (){
                 axios.all([this.reasignar(),this.restablecerCelda(), this.liberarCelda()]).then(axios.spread(function (reasig, rest, libel, refrh){
                     dropdown()
                     toastr.success('La operación concluyó de manera exitosa!')
                     toastr.success('restableciendo celda inferior y superior')
                      toastr.success('reasignando celda inferior')
+                })).catch( (error) => {
+                    toastr.error('exploto')
+                    console.log(error)
+                })
+        },
+        ejecutarDoblePeticionAxios: function (){
+                axios.all([this.cambioCeldaForzado(),this.restablecerCelda()]).then(axios.spread(function (reasig, rest){
+                    dropdown()
+                    toastr.success(' cambio forzado concluyó de manera exitosa!')
+
                 })).catch( (error) => {
                     toastr.error('exploto')
                     console.log(error)

@@ -13451,37 +13451,41 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('panel', {
         ejecutarSalida: function ejecutarSalida() {
             var _this4 = this;
 
-            var id = this.confirmado.id;
-            console.log('la propiedad cofirmado');
-            console.log(this.confirmado);
-            console.log(id);
-            console.log('antes viene id confirmado');
-            var celdaopcupada = this.celdasabajo.filter(function (celda) {
-                return celda.id === id;
-            });
-            console.log('hola');
-            console.log(celdaopcupada[0]);
-
-            if (this.confirmado.panel === 'superior' && celdaopcupada[0].estado === 'ocupado') {
-
-                this.ejecutarMultpliePetecionAxios();
+            if (this.celdaAsinada === 0) {
+                this.ejecutarDoblePeticionAxios();
             } else {
-                this.confirmado.marca = null;
-                this.confirmado.placa = null;
-                this.confirmado.estado = 'disponible';
-                this.confirmado.celdafinal = null, this.confirmado.duracion = null;
-                this.confirmado.updated_at = null;
-
-                var url = 'entradas/' + this.confirmado.id;
-                __WEBPACK_IMPORTED_MODULE_1_axios___default.a.put(url, this.confirmado).then(function (response) {
-                    //console.log(response)
-                    _this4.getCeldas();
-                    dropdown();
-                    _this4.errors = [];
-                    __WEBPACK_IMPORTED_MODULE_2_toastr___default.a.success('Vehículo retirado con Exito EPA');
-                }).catch(function (error) {
-                    _this4.errors = 'hubo un mal entendido';
+                var id = this.confirmado.id;
+                console.log('la propiedad cofirmado');
+                console.log(this.confirmado);
+                console.log(id);
+                console.log('antes viene id confirmado');
+                var celdaopcupada = this.celdasabajo.filter(function (celda) {
+                    return celda.id === id;
                 });
+                console.log('hola');
+                console.log(celdaopcupada[0]);
+
+                if (this.confirmado.panel === 'superior' && celdaopcupada[0].estado === 'ocupado') {
+
+                    this.ejecutarTlipePeticionAxios();
+                } else {
+                    this.confirmado.marca = null;
+                    this.confirmado.placa = null;
+                    this.confirmado.estado = 'disponible';
+                    this.confirmado.celdafinal = null, this.confirmado.duracion = null;
+                    this.confirmado.updated_at = null;
+
+                    var url = 'entradas/' + this.confirmado.id;
+                    __WEBPACK_IMPORTED_MODULE_1_axios___default.a.put(url, this.confirmado).then(function (response) {
+                        //console.log(response)
+                        _this4.getCeldas();
+                        dropdown();
+                        _this4.errors = [];
+                        __WEBPACK_IMPORTED_MODULE_2_toastr___default.a.success('Vehículo retirado con Exito EPA');
+                    }).catch(function (error) {
+                        _this4.errors = 'hubo un mal entendido';
+                    });
+                }
             }
         },
         reasignar: function reasignar() {
@@ -13525,17 +13529,41 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('panel', {
             var url = 'entradas/' + this.confirmado.id;
             return __WEBPACK_IMPORTED_MODULE_1_axios___default.a.put(url, this.confirmado);
         },
+        cambioCeldaForzado: function cambioCeldaForzado() {
+
+            var id = this.confirmado.id;
+            var celdaopcupada = this.celdasabajo.filter(function (celda) {
+                return celda.id === id;
+            });
+            celdaopcupada[0].marca = this.confirmado.placa;
+            celdaopcupada[0].placa = this.confirmado.marca;
+            celdaopcupada[0].estado = 'ocupado';
+            celdaopcupada[0].celdafinal = this.confirmado.celda;
+            celdaopcupada[0].celdainicial = celdaopcupada[0].celdainicial;
+            celdaopcupada[0].duracion = this.confirmado.duracion;
+            celdaopcupada[0].updated_at = null;
+
+            var url = 'entradas/' + celdaopcupada[0].id;
+            return __WEBPACK_IMPORTED_MODULE_1_axios___default.a.put(url, celdaopcupada[0]);
+        },
         refreshPanel: function refreshPanel() {
             return this.getCeldas();
         },
-        ejecutarMultpliePetecionAxios: function ejecutarMultpliePetecionAxios() {
+        ejecutarTlipePeticionAxios: function ejecutarTlipePeticionAxios() {
             __WEBPACK_IMPORTED_MODULE_1_axios___default.a.all([this.reasignar(), this.restablecerCelda(), this.liberarCelda()]).then(__WEBPACK_IMPORTED_MODULE_1_axios___default.a.spread(function (reasig, rest, libel, refrh) {
-
                 dropdown();
-
                 __WEBPACK_IMPORTED_MODULE_2_toastr___default.a.success('La operación concluyó de manera exitosa!');
                 __WEBPACK_IMPORTED_MODULE_2_toastr___default.a.success('restableciendo celda inferior y superior');
                 __WEBPACK_IMPORTED_MODULE_2_toastr___default.a.success('reasignando celda inferior');
+            })).catch(function (error) {
+                __WEBPACK_IMPORTED_MODULE_2_toastr___default.a.error('exploto');
+                console.log(error);
+            });
+        },
+        ejecutarDoblePeticionAxios: function ejecutarDoblePeticionAxios() {
+            __WEBPACK_IMPORTED_MODULE_1_axios___default.a.all([this.cambioCeldaForzado(), this.restablecerCelda()]).then(__WEBPACK_IMPORTED_MODULE_1_axios___default.a.spread(function (reasig, rest) {
+                dropdown();
+                __WEBPACK_IMPORTED_MODULE_2_toastr___default.a.success(' cambio forzado concluyó de manera exitosa!');
             })).catch(function (error) {
                 __WEBPACK_IMPORTED_MODULE_2_toastr___default.a.error('exploto');
                 console.log(error);
