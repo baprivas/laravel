@@ -13381,8 +13381,7 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('panel', {
     created: function created() {
         var _this = this;
 
-        // this.contador() 
-
+        this.iniciar();
         dropdown();
 
         this.getCeldas();
@@ -13395,21 +13394,21 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('panel', {
         });
 
         enlace.$on('confirmado:click', function (saliendo) {
-            console.log('confirmando y ejecutando la accion');
+            //console.log('confirmando y ejecutando la accion')
 
             _this.confirmado = saliendo;
 
             _this.ejecutarSalida(_this.confirmado);
         });
     },
-    template: '  \n        <section>\n            <div class="col s12 m12 l12">\n                <div class="row">\n                    <celda-superior v-for="celdasuperior in celdasarriba" :celdasuperior="celdasuperior" ></celda-superior>\n                </div>\n\n                <div class="row">\n                    <celda-inferior v-for="celdainferior in celdasabajo"  :celdainferior="celdainferior" ></celda-inferior>\n                </div>\n            </div>\n            <div class="divider"></div>\n\n            <div class="row">\n                <div class="col s12 m12 l12">\n                    <div class="section"></div>\n                    <div class="row">\n                        <div class="col s12 m12 l6 center"><a href="#entrada"  class="col s12 m12 l12 btn btn-large indigo accent-4 modal-trigger">Entrada</a></div>\n                        \n                    </div>\n                </div>\n            </div>\n                            <formulario-entrada></formulario-entrada>\n                            <salida></salida>\n        </section>\n    ',
+    template: '  \n        <section>\n            <div class="col s12 m12 l12">\n                <div class="row">\n                    <celda-superior v-for="celdasuperior in celdasarriba" :celdasuperior="celdasuperior" ></celda-superior>\n                </div>\n\n                <div class="row">\n                    <celda-inferior v-for="celdainferior in celdasabajo"  :celdainferior="celdainferior" ></celda-inferior>\n                </div>\n            </div>\n            <div class="divider"></div>\n\n            <div class="row">\n                <div class="col s12 m12 l12">\n                    <div class="section"></div>\n                    <div class="row">\n                        <div class="col s12 m12 l6 center"><a href="#entrada"  class="col s12 m12 l12 btn btn-large offset-l5 indigo accent-4 modal-trigger">Generar Entrada</a></div>\n                        \n                    </div>\n                </div>\n            </div>\n                            <formulario-entrada></formulario-entrada>\n                            <salida></salida>\n        </section>\n    ',
     data: function data() {
         return {
             celdasarriba: [],
             celdasabajo: [],
             placa: null,
             marca: null,
-            duracion: 0
+            contador: 0
 
         };
     },
@@ -13420,7 +13419,7 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('panel', {
 
             var urlceldas = 'entradas';
             __WEBPACK_IMPORTED_MODULE_1_axios___default.a.get(urlceldas).then(function (response) {
-                console.log(response.data);
+                // console.log(response.data)
                 _this2.celdasarriba = response.data[0];
                 _this2.celdasabajo = response.data[1];
             });
@@ -13433,9 +13432,13 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('panel', {
             } else {
                 this.celdaAsinada.marca = marca;
                 this.celdaAsinada.placa = placa;
-                console.log(this.celdaAsinada);
+                this.celdaAsinada.duracion = this.contador;
+                this.celdaAsinada.celdainicial = this.celdaAsinada.celda;
+                //console.log(this.celdaAsinada) 
                 var celda = this.celdaAsinada;
                 celda.estado = 'ocupado';
+                console.log('mosca no llega nada');
+                console.log(celda.duracion);
                 var url = 'entradas/' + celda.id;
                 __WEBPACK_IMPORTED_MODULE_1_axios___default.a.put(url, celda).then(function (response) {
                     //console.log(response)
@@ -13455,15 +13458,11 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('panel', {
                 this.ejecutarDoblePeticionAxios();
             } else {
                 var id = this.confirmado.id;
-                console.log('la propiedad cofirmado');
-                console.log(this.confirmado);
-                console.log(id);
-                console.log('antes viene id confirmado');
                 var celdaopcupada = this.celdasabajo.filter(function (celda) {
                     return celda.id === id;
                 });
-                console.log('hola');
-                console.log(celdaopcupada[0]);
+
+                //console.log(celdaopcupada[0])
 
                 if (this.confirmado.panel === 'superior' && celdaopcupada[0].estado === 'ocupado') {
 
@@ -13557,7 +13556,7 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('panel', {
                 __WEBPACK_IMPORTED_MODULE_2_toastr___default.a.success('reasignando celda inferior');
             })).catch(function (error) {
                 __WEBPACK_IMPORTED_MODULE_2_toastr___default.a.error('exploto');
-                console.log(error);
+                //console.log(error)
             });
         },
         ejecutarDoblePeticionAxios: function ejecutarDoblePeticionAxios() {
@@ -13568,22 +13567,15 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('panel', {
                 __WEBPACK_IMPORTED_MODULE_2_toastr___default.a.error('exploto');
                 console.log(error);
             });
+        },
+        iniciar: function iniciar() {
+            var _this5 = this;
+
+            setInterval(function () {
+                _this5.contador = _this5.contador + 1;
+                console.log('contando');
+            }, 1000);
         }
-        // iniciar(){
-        //     setInterval(() =>{
-        //         switch (this.activated) {
-        //             case true:
-        //                 this.contador = this.contador +1;
-        //             break;
-        //             case false:
-        //                 this.contador = 0;
-        //                 localStorage.setItem(this.id, this.fincontador);
-        //             break;
-        //         }
-        //     },1000);
-
-        // }    
-
 
     },
     computed: {
@@ -13645,7 +13637,7 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('celda-superior', {
         };
     },
 
-    template: '<div>\n                    <div class="col s6 m1 l1 config-caja-celda ">\n                       <a class="btn-large config-celdas dropdown-trigger red"  :data-target=\'celdasuperior.celda\' v-if="celdasuperior.estado === \'ocupado\'">{{ celdasuperior.celda }}</a>\n                       <a class="btn-large config-celdas green"  :data-target=\'celdasuperior.celda\' v-else>{{ celdasuperior.celda }}</a>\n                    </div>\n                       <ul :id=\'celdasuperior.celda\' class=\'dropdown-content\' >\n                           <li><a  class="indigo-text text-accent-4">Placa -  {{ celdasuperior.placa }}</a></li>\n                           <li><a  class="indigo-text text-accent-4">Marca -  {{ celdasuperior.marca }}</a></li>\n                           <li class="divider" tabindex="-1"></li>\n                           <li><a class="new small indigo-text text-accent-4 " > {{ duracion }}</a></li>\n                           <li><a href="#salida" class="new small indigo-text text-accent-4 modal-trigger" v-if="celdasuperior.estado === \'ocupado\'" @click="preFactura">Retirar Veh\xEDculo</a></li>\n                       </ul>\n                    \n                </div>',
+    template: '<div>\n                    <div class="col s6 m1 l1 config-caja-celda ">\n                       <a class="btn-large config-celdas dropdown-trigger red"  :data-target=\'celdasuperior.celda\' v-if="celdasuperior.estado === \'ocupado\'">{{ celdasuperior.celda }}</a>\n                       <a class="btn-large config-celdas green"  :data-target=\'celdasuperior.celda\' v-else>{{ celdasuperior.celda }}</a>\n                    </div>\n                       <ul :id=\'celdasuperior.celda\' class=\'dropdown-content\' >\n                           <li><a  class="indigo-text text-accent-4">Placa -  {{ celdasuperior.placa }}</a></li>\n                           <li><a  class="indigo-text text-accent-4">Marca -  {{ celdasuperior.marca }}</a></li>\n                           <li><a  class="indigo-text text-accent-4">Celda Anteriror -  {{ celdasuperior.celdainicial }}</a></li>\n                           <li class="divider" tabindex="-1"></li>\n                           <li><a class="new small red-text text-accent-4 " > {{ celdasuperior.duracion }}</a></li>\n                           <li><a href="#salida" class="new small red-text text-accent-4 modal-trigger" v-if="celdasuperior.estado === \'ocupado\'" @click="preFactura">Retirar Veh\xEDculo</a></li>\n                       </ul>\n                    \n                </div>',
     methods: {
         preFactura: function preFactura() {
             this.celda = this.celdasuperior;
@@ -13689,7 +13681,7 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('celda-inferior', {
         };
     },
 
-    template: '<div>\n                    <div class="col s6 m1 l1 config-caja-celda ">\n                        <a class="btn-large dropdown-trigger red"  :data-target=\'celdainferior.celda\'  v-if="celdainferior.estado === \'ocupado\'">{{ celdainferior.celda }}</a>\n                        <a class="btn-large green"  v-else>{{ celdainferior.celda }}</a>\n                    </div> \n                    <ul :id=\'celdainferior.celda\' class=\'dropdown-content\' >\n                           <li><a  class="indigo-text text-accent-4">Placa -  {{ celdainferior.placa }}</a></li>\n                           <li><a  class="indigo-text text-accent-4">Marca -  {{ celdainferior.marca }}</a></li>\n                           <li class="divider" tabindex="-1"></li>\n                           <li><a class="new small indigo-text text-accent-4 " > {{ duracion }}</a></li>\n                           <li><a href="#salida" class="new small indigo-text text-accent-4 modal-trigger" v-if="celdainferior.estado === \'ocupado\'" @click="preFactura">Retirar Veh\xEDculo</a></li>\n                       </ul>\n                </div>',
+    template: '<div>\n                    <div class="col s6 m1 l1 config-caja-celda ">\n                        <a class="btn-large dropdown-trigger red"  :data-target=\'celdainferior.celda\'  v-if="celdainferior.estado === \'ocupado\'">{{ celdainferior.celda }}</a>\n                        <a class="btn-large green"  v-else>{{ celdainferior.celda }}</a>\n                    </div> \n                    <ul :id=\'celdainferior.celda\' class=\'dropdown-content\' >\n                           <li><a  class="indigo-text text-accent-4">Placa -  {{ celdainferior.placa }}</a></li>\n                           <li><a  class="indigo-text text-accent-4">Marca -  {{ celdainferior.marca }}</a></li>\n                           <li><a  class="indigo-text text-accent-4">Celda Anteriror -  {{ celdainferior.celdainicial }}</a></li>\n                           <li class="divider" tabindex="-1"></li>\n                           <li><a class="new small red-text text-accent-4 " > {{ celdainferior.duracion }}</a></li>\n                           <li><a href="#salida" class="new small red-text text-accent-4 modal-trigger" v-if="celdainferior.estado === \'ocupado\'" @click="preFactura">Retirar Veh\xEDculo</a></li>\n                       </ul>\n                </div>',
     methods: {
         preFactura: function preFactura() {
             this.celda = this.celdainferior;
@@ -13740,32 +13732,43 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('formulario-entrada', {
 
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('salida', {
     created: function created() {
-        var _this5 = this;
+        var _this6 = this;
 
         enlace.$on('preFactura:click', function (celda) {
             console.log('pre-confirmacion');
             console.log(celda);
-            _this5.saliendo = celda;
-            _this5.saliendo.celdafinal = celda.celda;
+            _this6.saliendo = celda;
+            _this6.saliendo.celdafinal = celda.celda;
+            _this6.generarRegistro();
         });
     },
     data: function data() {
         return {
             monto: 0,
-            duracion: 120,
             tarifa: 30,
             saliendo: []
         };
     },
 
-    template: '\n                <div id="salida" class="modal modal-fixed-footer">\n                        <div class="modal-content">\n                            <h4>Factura</h4>\n                           \n\n                            <div class="collection">\n                                <a class="collection-item"><span class="badge">{{ this.saliendo.celda }}</span>celda</a>\n                                <a class="collection-item"><span class="badge">{{ this.saliendo.placa }}</span>Veh\xEDculo</a>\n                                <a class="collection-item"><span class="badge">{{  this.saliendo.marca }}</span>marca</a>\n                                <a class="collection-item"><span class="badge">{{  this.saliendo.celdainicial  }}</span>Celda Inicial</a>\n                                <a class="collection-item"><span class="badge">{{   this.saliendo.celda }}</span>Celda Final</a>\n                                <a class="collection-item"><span class="badge">{{  this.total }}</span>monto</a>\n                                <a class="collection-item"><span class="badge">{{ this.duracion }}</span>duraci\xF3n</a>\n                                \n                            </div>\n                        </div>\n                   \n                    <div class="modal-footer">\n                        <button  class="modal-close waves-effect waves-green btn-flat" @click="salidaVehiculo">Confirmar</button>\n                        <button  class="modal-close waves-effect waves-green btn-flat">Cancelar</button>\n                    </div>  \n                </div> ',
+    template: '\n                <div id="salida" class="modal modal-fixed-footer">\n                        <div class="modal-content">\n                            <h4>Factura</h4>\n                           \n\n                            <div class="collection">\n                                <a class="collection-item"><span class="badge">{{ this.saliendo.celda }}</span>celda</a>\n                                <a class="collection-item"><span class="badge">{{ this.saliendo.placa }}</span>Veh\xEDculo</a>\n                                <a class="collection-item"><span class="badge">{{  this.saliendo.marca }}</span>marca</a>\n                                <a class="collection-item"><span class="badge">{{  this.saliendo.celdainicial  }}</span>Celda Inicial</a>\n                                <a class="collection-item"><span class="badge">{{   this.saliendo.celda }}</span>Celda Final</a>\n                                <a class="collection-item"><span class="badge">{{  this.total }}</span>monto</a>\n                                <a class="collection-item"><span class="badge">{{ this.saliendo.duracion }}</span>duraci\xF3n</a>\n                                \n                            </div>\n                        </div>\n                   \n                    <div class="modal-footer">\n                        <button  class="modal-close waves-effect waves-green btn-flat" @click="salidaVehiculo">Confirmar</button>\n                        <button  class="modal-close waves-effect waves-green btn-flat">Cancelar</button>\n                    </div>  \n                </div> ',
     methods: {
         salidaVehiculo: function salidaVehiculo() {
             enlace.$emit('confirmado:click', this.saliendo);
-            this.saliendo.celda;
-            this.saliendo.placa;
-            this.saliendo.marca;
-            this.saliendo.celdafinal;
+        },
+        generarRegistro: function generarRegistro() {
+
+            var url = 'entradas';
+            __WEBPACK_IMPORTED_MODULE_1_axios___default.a.post(url, {
+                placa: this.saliendo.placa,
+                marca: this.saliendo.marca,
+                estado: this.saliendo.estado,
+                puesto: this.saliendo.celda,
+                duracion: this.saliendo.duracion
+            }).then(function (response) {
+                console.log('resgitro generado');
+            }).catch(function (error) {
+                console.log('no exitoso');
+            });
         }
 
     },
@@ -13776,6 +13779,37 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('salida', {
         }
     }
 
+});
+
+__WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('score', {
+    created: function created() {
+        var _this7 = this;
+
+        this.getScore();
+        setInterval(function () {
+            _this7.getScore();
+        }, 9000);
+    },
+    template: '\n    <div class="collection">\n\t\t<a  class="collection-item" v-for="record in score"><span class="badge"> {{ record.Total }} veces ocupada - tiempo ocupada: {{ record.DuracionFin }} seg</span>Puesto: {{ record.Puesto }}</a>\n\t\t\n\t</div>\n    ',
+    data: function data() {
+        return {
+            score: [],
+            filtrado: []
+        };
+    },
+
+    methods: {
+        getScore: function getScore() {
+            var _this8 = this;
+
+            var url = '/record';
+            __WEBPACK_IMPORTED_MODULE_1_axios___default.a.get(url).then(function (response) {
+                console.log(response.data);
+                _this8.score = response.data;
+            });
+        }
+    },
+    computed: {}
 });
 
 new __WEBPACK_IMPORTED_MODULE_0_vue___default.a({

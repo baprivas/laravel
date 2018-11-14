@@ -19,7 +19,7 @@ class CreateParteSuperiorTable extends Migration
             $table->string('estado')->default('disponible');
             $table->string('placa')->nullable();
             $table->string('marca')->nullable();
-            $table->string('duracion')->nullable();
+            $table->integer('duracion')->nullable();
             $table->string('celdafinal')->nullable();
             $table->string('celdainicial')->nullable();
             $table->string('panel')->default('superior');

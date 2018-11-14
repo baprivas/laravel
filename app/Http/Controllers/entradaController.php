@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Entrada;
 use App\Superiores;
 use App\Inferiores;
+
 use Illuminate\Http\Response;
 
 class entradaController extends Controller
@@ -34,12 +35,12 @@ class entradaController extends Controller
     {
         if ($request->panel === 'superior'){
             Superiores::find($id)->update($request->all());
-            dd($request->celda);
+            
         }
 
         if ($request->panel === 'inferior'){
             Inferiores::find($id)->update($request->all());
-            dd($request->celda);
+            
         }
             
         

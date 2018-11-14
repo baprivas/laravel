@@ -14,8 +14,7 @@ var dropdown = function() {
 
 Vue.component('panel', {
     created: function (){
-        // this.contador() 
-
+        this.iniciar()
         dropdown()
 
         this.getCeldas()
@@ -27,9 +26,8 @@ Vue.component('panel', {
             this.nuevaCelda(this.placa, this.marca)
         })
 
-
         enlace.$on('confirmado:click', (saliendo) => {
-            console.log('confirmando y ejecutando la accion')
+            //console.log('confirmando y ejecutando la accion')
            
             this.confirmado = saliendo
 
@@ -55,7 +53,7 @@ Vue.component('panel', {
                 <div class="col s12 m12 l12">
                     <div class="section"></div>
                     <div class="row">
-                        <div class="col s12 m12 l6 center"><a href="#entrada"  class="col s12 m12 l12 btn btn-large indigo accent-4 modal-trigger">Entrada</a></div>
+                        <div class="col s12 m12 l6 center"><a href="#entrada"  class="col s12 m12 l12 btn btn-large offset-l5 indigo accent-4 modal-trigger">Generar Entrada</a></div>
                         
                     </div>
                 </div>
@@ -70,7 +68,7 @@ Vue.component('panel', {
             celdasabajo: [],
             placa: null,
             marca: null,
-            duracion: 0,
+            contador: 0
             
         }
     },
@@ -78,7 +76,7 @@ Vue.component('panel', {
         getCeldas: function () {
             var urlceldas = 'entradas'
             axios.get(urlceldas).then( response => {
-                console.log(response.data)
+               // console.log(response.data)
                 this.celdasarriba = response.data[0]
                 this.celdasabajo = response.data[1]
             })
@@ -90,16 +88,20 @@ Vue.component('panel', {
             }else{
                 this.celdaAsinada.marca = marca
                 this.celdaAsinada.placa = placa
-                console.log(this.celdaAsinada) 
+                this.celdaAsinada.duracion = this.contador
+                this.celdaAsinada.celdainicial = this.celdaAsinada.celda
+                //console.log(this.celdaAsinada) 
                 let celda = this.celdaAsinada
                 celda.estado = 'ocupado'
+                console.log( 'mosca no llega nada')
+                console.log( celda.duracion)
                 var url = 'entradas/'+ celda.id
                 axios.put(url, celda).then(response => {
                 //console.log(response)
                 this.getCeldas()
                 dropdown()
                 this.errors = []
-                toastr.success('Puesto: ' + celda.celda + 'placa: ' + celda.placa )
+                toastr.success('Puesto: ' + celda.celda + ' placa: ' + celda.placa )
                 }).catch(error =>{
                 this.errors = 'hubo un mal entendido'
                 })
@@ -113,13 +115,9 @@ Vue.component('panel', {
                 this.ejecutarDoblePeticionAxios()
             }else{
                 let id = this.confirmado.id
-                console.log('la propiedad cofirmado')
-                console.log(this.confirmado)
-                console.log(id)
-                    console.log('antes viene id confirmado')
-                  let celdaopcupada = this.celdasabajo.filter(celda => celda.id === id)
-                  console.log('hola')
-                  console.log(celdaopcupada[0])
+                let celdaopcupada = this.celdasabajo.filter(celda => celda.id === id)
+                  
+                  //console.log(celdaopcupada[0])
 
                   if(this.confirmado.panel === 'superior' && celdaopcupada[0].estado === 'ocupado'){
                 
@@ -139,7 +137,7 @@ Vue.component('panel', {
                     this.getCeldas()
                     dropdown()
                     this.errors = []
-                    toastr.success('Vehículo retirado con Exito EPA')
+                    toastr.success('Vehículo retirado con Exito ')
                     }).catch(error =>{
                     this.errors = 'hubo un mal entendido'
                 })
@@ -221,7 +219,7 @@ Vue.component('panel', {
                      toastr.success('reasignando celda inferior')
                 })).catch( (error) => {
                     toastr.error('exploto')
-                    console.log(error)
+                    //console.log(error)
                 })
         },
         ejecutarDoblePeticionAxios: function (){
@@ -233,21 +231,14 @@ Vue.component('panel', {
                     toastr.error('exploto')
                     console.log(error)
                 })
-        }
-        // iniciar(){
-        //     setInterval(() =>{
-        //         switch (this.activated) {
-        //             case true:
-        //                 this.contador = this.contador +1;
-        //             break;
-        //             case false:
-        //                 this.contador = 0;
-        //                 localStorage.setItem(this.id, this.fincontador);
-        //             break;
-        //         }
-        //     },1000);
+        },
+        iniciar: function(){
+            setInterval(() =>{
+                this.contador = this.contador + 1
+                console.log('contando')
+                },1000);
 
-        // }    
+        }    
         
 
 
@@ -312,9 +303,10 @@ Vue.component('celda-superior', {
                        <ul :id='celdasuperior.celda' class='dropdown-content' >
                            <li><a  class="indigo-text text-accent-4">Placa -  {{ celdasuperior.placa }}</a></li>
                            <li><a  class="indigo-text text-accent-4">Marca -  {{ celdasuperior.marca }}</a></li>
+                           <li><a  class="indigo-text text-accent-4">Celda Anteriror -  {{ celdasuperior.celdainicial }}</a></li>
                            <li class="divider" tabindex="-1"></li>
-                           <li><a class="new small indigo-text text-accent-4 " > {{ duracion }}</a></li>
-                           <li><a href="#salida" class="new small indigo-text text-accent-4 modal-trigger" v-if="celdasuperior.estado === 'ocupado'" @click="preFactura">Retirar Vehículo</a></li>
+                           <li><a class="new small red-text text-accent-4 " > {{ celdasuperior.duracion }}</a></li>
+                           <li><a href="#salida" class="new small red-text text-accent-4 modal-trigger" v-if="celdasuperior.estado === 'ocupado'" @click="preFactura">Retirar Vehículo</a></li>
                        </ul>
                     
                 </div>`,
@@ -370,9 +362,10 @@ Vue.component('celda-inferior', {
                     <ul :id='celdainferior.celda' class='dropdown-content' >
                            <li><a  class="indigo-text text-accent-4">Placa -  {{ celdainferior.placa }}</a></li>
                            <li><a  class="indigo-text text-accent-4">Marca -  {{ celdainferior.marca }}</a></li>
+                           <li><a  class="indigo-text text-accent-4">Celda Anteriror -  {{ celdainferior.celdainicial }}</a></li>
                            <li class="divider" tabindex="-1"></li>
-                           <li><a class="new small indigo-text text-accent-4 " > {{ duracion }}</a></li>
-                           <li><a href="#salida" class="new small indigo-text text-accent-4 modal-trigger" v-if="celdainferior.estado === 'ocupado'" @click="preFactura">Retirar Vehículo</a></li>
+                           <li><a class="new small red-text text-accent-4 " > {{ celdainferior.duracion }}</a></li>
+                           <li><a href="#salida" class="new small red-text text-accent-4 modal-trigger" v-if="celdainferior.estado === 'ocupado'" @click="preFactura">Retirar Vehículo</a></li>
                        </ul>
                 </div>`,
     methods: {
@@ -463,13 +456,13 @@ Vue.component('salida', {
             console.log(celda)
             this.saliendo = celda
             this.saliendo.celdafinal = celda.celda
+            this.generarRegistro()
 
         })
     },
     data(){
         return {
             monto: 0,
-            duracion: 120,
             tarifa: 30,
             saliendo: []
         }
@@ -487,7 +480,7 @@ Vue.component('salida', {
                                 <a class="collection-item"><span class="badge">{{  this.saliendo.celdainicial  }}</span>Celda Inicial</a>
                                 <a class="collection-item"><span class="badge">{{   this.saliendo.celda }}</span>Celda Final</a>
                                 <a class="collection-item"><span class="badge">{{  this.total }}</span>monto</a>
-                                <a class="collection-item"><span class="badge">{{ this.duracion }}</span>duración</a>
+                                <a class="collection-item"><span class="badge">{{ this.saliendo.duracion }}</span>duración</a>
                                 
                             </div>
                         </div>
@@ -500,12 +493,25 @@ Vue.component('salida', {
     methods: {
         salidaVehiculo: function () {
             enlace.$emit('confirmado:click', this.saliendo)
-            this.saliendo.celda
-            this.saliendo.placa
-            this.saliendo.marca
-            this.saliendo.celdafinal
+           
 
         },
+        generarRegistro: function (){
+            
+                var url = 'entradas';
+                axios.post(url, {
+                    placa: this.saliendo.placa,
+                    marca: this.saliendo.marca,
+                    estado: this.saliendo.estado,
+                    puesto: this.saliendo.celda,
+                    duracion: this.saliendo.duracion
+                }).then(response => {
+                    console.log('resgitro generado') 
+                   
+                }).catch(error => {
+                    console.log('no exitoso')
+                });
+        }
 
         
     },
@@ -518,6 +524,40 @@ Vue.component('salida', {
     
 })
 
+Vue.component('score', {
+    created: function (){
+        this.getScore()
+        setInterval(() =>{
+            this.getScore()
+        },9000);
+    },
+    template: `
+    <div class="collection">
+		<a  class="collection-item" v-for="record in score"><span class="badge"> {{ record.Total }} veces ocupada - tiempo ocupada: {{ record.DuracionFin }} seg</span>Puesto: {{ record.Puesto }}</a>
+		
+	</div>
+    `,
+    data(){
+        return {
+            score: [],
+            filtrado: []
+        }
+    },
+    methods:{
+        getScore(){
+            var url = '/record'
+            axios.get(url).then( response => {
+                console.log(response.data)
+                this.score = response.data
+                
+            })
+        },
+           
+    },
+    computed: {
+        
+    }
+})
 
 
  new Vue({

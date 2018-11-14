@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Superiores extends Model
 {
-    protected $fillable = [ 'celda', 'estado', 'placa', 'marca'];
+    protected $fillable = [ 'celda', 'estado', 'placa', 'marca', 'duracion'];
 }

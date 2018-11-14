@@ -18,5 +18,5 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
-
+Route::get('/record', 'HomeController@score')->name('score');
 Route::resource('entradas', 'entradaController', ['except' => 'show', 'create', 'edit']);
